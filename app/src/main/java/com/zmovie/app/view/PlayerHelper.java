@@ -1,7 +1,6 @@
 package com.zmovie.app.view;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.dueeeke.videoplayer.player.IjkPlayer;
@@ -67,6 +66,9 @@ public class PlayerHelper {
                 .setCustomMediaPlayer(ijkPlayer)
                 .build();
         ijkVideoView.setPlayerConfig(playerConfig);
+        if (!ijkVideoView.isFullScreen()){
+            ijkVideoView.setFocusable(false);
+        }
     }
 
 

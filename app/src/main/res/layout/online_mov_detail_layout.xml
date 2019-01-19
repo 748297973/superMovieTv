@@ -8,11 +8,11 @@
     android:layout_height="match_parent">
     <com.huangyong.playerlib.CustomIjkplayer
         android:id="@+id/video_view"
-        android:layout_width="500pt"
-        android:layout_height="300pt"
+        android:layout_width="450pt"
+        android:layout_height="270pt"
         android:layout_marginLeft="50pt"
         android:focusable="false"
-        android:layout_marginTop="70pt"
+        android:layout_marginTop="60pt"
         android:background="@android:color/transparent"
         />
     <TextView
@@ -25,7 +25,7 @@
         android:textStyle="bold"
         android:layout_toRightOf="@+id/video_view"
         android:layout_marginLeft="20pt"
-        android:layout_marginTop="90pt"
+        android:layout_marginTop="70pt"
         />
     <TextView
         android:layout_width="580pt"
@@ -39,7 +39,7 @@
         android:focusable="true"
         android:layout_below="@+id/detai_title"
         android:layout_marginLeft="20pt"
-        android:layout_marginTop="40pt"
+        android:layout_marginTop="20pt"
         android:lines="2"
         android:ellipsize="end"
         android:lineSpacingExtra="8pt"
@@ -138,17 +138,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_marginLeft="50pt"
-        android:layout_marginTop="20pt"
+        android:layout_marginTop="10pt"
         android:layout_below="@+id/video_view"
         android:layout_marginRight="50pt"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         android:orientation="vertical"
         android:id="@+id/it_list"
-        android:layout_height="250pt">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="播放"
+            android:visibility="gone"
             android:textSize="20pt"
             android:textColor="@color/white"
             />
@@ -161,7 +164,26 @@
             android:orientation="horizontal"
             app:tv_layoutManager="V7LinearLayoutManager"
             android:padding="2pt"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="猜你喜欢"
+            android:layout_marginTop="12pt"
+            android:textSize="20pt"
+            android:textColor="@color/white"
+            android:focusable="true"
+            />
+        <com.owen.tvrecyclerview.widget.TvRecyclerView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/recommend"
+            android:layout_marginTop="6pt"
+            android:layout_width="match_parent"
+            android:layout_height="250pt"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:orientation="horizontal"
+            app:tv_layoutManager="ListLayoutManager"
+            android:padding="2pt"/>
 
     </LinearLayout>
 </RelativeLayout>

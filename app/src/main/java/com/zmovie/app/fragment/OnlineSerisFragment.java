@@ -50,11 +50,11 @@ public class OnlineSerisFragment extends BaseFragment {
     }
 
     private void initView() {
-        String[] arr = { "国产剧","港剧","台湾剧","日剧",
-                "美剧","韩剧","动漫",
+        String[] arr = {"美剧","动漫", "国产剧","港剧","台湾剧","日剧",
+                "韩剧",
                 "微电影","海外剧"};
-        String[] type = {"native","hongkong","taiwan","japanise",
-                "america","koria","curtoon","shortmv","ocean"};
+        String[] type = {"america","curtoon","native","hongkong","taiwan","japanise",
+                "koria","shortmv","ocean"};
         ArrayList<Fragment> list = new ArrayList<>();
         for (int i = 0; i < arr.length; i++) {
             list.add(OnlineSerisListFragment.newInstance(type[i]));
@@ -67,20 +67,6 @@ public class OnlineSerisFragment extends BaseFragment {
         }
         PageAdapter adapter = new PageAdapter(getChildFragmentManager(),list,arr);
         mTablayout.setTabScrollMode(TabLayout.MODE_SCROLLABLE);
-        mTablayout.addOnTabSelectedListener(new TvTabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TvTabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabUnselected(TvTabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TvTabLayout.Tab tab) {
-
-            }
-        });
         mvpager.setAdapter(adapter);
         mvpager.setOffscreenPageLimit(5);
         mTablayout.setupWithViewPager(mvpager);

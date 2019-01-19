@@ -60,4 +60,11 @@ public interface ApiService {
   @POST(UrlConfig.DOWNLOADBASEURL+"download3.php")
   Observable<Object> getTorrentFile(@Field("id") int id, @Field("action") String action, @Field("uhash") String uhush);
 
+
+  @GET(UrlConfig.GET_RANDOM_REOMMEND)
+  Observable<OnlinePlayInfo> getBtRandomRecomend(@Query("type") String type);//获取推荐
+
+  @GET(UrlConfig.GET_RANDOM_SERI_RECMMEND)
+  Observable<OnlinePlayInfo> getSeriRandomRecomend(@Query("type") String type);//获取推荐
+
 }

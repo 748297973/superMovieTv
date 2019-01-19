@@ -43,5 +43,9 @@ public class UrlConfig {
     public static final String GETSEARCH = "ygcms/getSearch.php";
 //    public static final String GET_VIDEO_THREE = "home.json";
 
+    //猜你喜欢,随机12个 需要跟参数type
+    public static final String GET_RANDOM_REOMMEND = "ygcms/getLineMovieRandom.php";
+
+    public static  final String GET_RANDOM_SERI_RECMMEND = "ygcms/getLineSeriRandom.php";
 
 }

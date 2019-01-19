@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.mingle.widget.LoadingView;
 import com.owen.tvrecyclerview.widget.SimpleOnItemListener;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.zmovie.app.R;
@@ -19,6 +20,7 @@ import com.zmovie.app.presenter.GetOnlinePresenter;
 import com.zmovie.app.presenter.iview.IOnlineView;
 import com.zmovie.app.view.MovieDetailActivity;
 import com.zmovie.app.view.OnlineMovDetailActivity;
+import com.zmovie.app.view.OnlineSeriDetailActivity;
 
 import butterknife.BindView;
 
@@ -33,6 +35,9 @@ public class OnlineSerisListFragment extends BaseFragment implements IOnlineView
     private int index;
     @BindView(R.id.mvlist)
     TvRecyclerView mRecyclerView;
+    @BindView(R.id.loadView)
+    LoadingView loadingView;
+
     private  String pageType;
     private static OnlineSerisListFragment btlistFragment;
     private CommonRecyclerViewAdapter mAdapter;
@@ -49,6 +54,12 @@ public class OnlineSerisListFragment extends BaseFragment implements IOnlineView
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        initData(pageType);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = getArguments();
@@ -56,12 +67,13 @@ public class OnlineSerisListFragment extends BaseFragment implements IOnlineView
         mRecyclerView.setSpacingWithMargins(20, 30);
         mRecyclerView.setSelectedItemAtCentered(true);
         setListener();
+        loadingView.setVisibility(View.VISIBLE);
+        loadingView.setLoadingText("正在加载，请稍后……");
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        initData(pageType);
     }
 
     private void initData(String pageType) {
@@ -113,9 +125,10 @@ public class OnlineSerisListFragment extends BaseFragment implements IOnlineView
         public void onItemClick(TvRecyclerView parent, View itemView, int position) {
             if (info!=null&&info.getData().size()>0){
                 if (position<info.getData().size()){
-                    Intent intent = new Intent(getContext(), OnlineMovDetailActivity.class);
+                    Intent intent = new Intent(getContext(), OnlineSeriDetailActivity.class);
                     String imgUrl = info.getData().get(position).getDownimgurl();
                     intent.putExtra(GlobalMsg.KEY_POST_IMG, imgUrl);
+                    intent.putExtra(GlobalMsg.KEY_MOVIE_TYPE,pageType);
                     intent.putExtra(GlobalMsg.KEY_DOWN_URL,info.getData().get(position).getDownLoadUrl());
                     intent.putExtra(GlobalMsg.KEY_MOVIE_TITLE, info.getData().get(position).getDownLoadName());
                     intent.putExtra(GlobalMsg.KEY_MOVIE_DOWN_ITEM_TITLE, info.getData().get(position).getDowndtitle());
@@ -136,6 +149,7 @@ public class OnlineSerisListFragment extends BaseFragment implements IOnlineView
 
     @Override
     public void loadData(OnlinePlayInfo info) {
+        loadingView.setVisibility(View.GONE);
         this.info = info;
         mAdapter = new OnlineMvAdapter(getContext());
         mAdapter.setDatas(info.getData());

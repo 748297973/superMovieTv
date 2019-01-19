@@ -59,4 +59,8 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.0'
 
     implementation 'com.just.agentweb:agentweb:4.0.2'
+
+    //loading view https://github.com/zzz40500/android-shapeLoadingView
+    implementation 'com.github.zzz40500:android-shapeLoadingView:1.0.3.2'
+
 }

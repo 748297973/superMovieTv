@@ -21,6 +21,7 @@ public class GlobalMsg {
     public static final String KEY_MOVIE_DOWN_ITEM_TITLE = "KEY_MOVIE_DOWN_ITEM_TITLE";
     public static final String KEY_PLAY_URL = "KEY_PLAY_URL";
     public static final String KEY_PLAY_TITLE = "KEY_PLAY_TITLE";
+    public static final String KEY_MOVIE_TYPE = "KEY_MOVIE_TYPE";
     public static boolean ISSHOW = false;
 
 

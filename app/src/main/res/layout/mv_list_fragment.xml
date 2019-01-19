@@ -22,4 +22,10 @@
         app:tv_layoutManager="GridLayoutManager"
         app:tv_numColumns="6"
         app:tv_numRows="3" />
+    <com.mingle.widget.LoadingView
+        android:id="@+id/loadView"
+        android:visibility="gone"
+        android:layout_width="200pt"
+        android:layout_gravity="center"
+        android:layout_height="200pt"/>
 </FrameLayout>

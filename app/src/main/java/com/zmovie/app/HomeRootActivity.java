@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.huangyong.playerlib.Params;
 import com.owen.tab.TvTabLayout;
@@ -136,19 +137,19 @@ public class HomeRootActivity extends FragmentActivity implements BaseFragment.F
         }
     }
 
+    /**
+     * 再按一次退出
+     */
+    private long mExitTime = 0;
+
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public void onBackPressed() {
 
-        if (keyCode==KeyEvent.KEYCODE_BACK){
-
-            Intent intent = new Intent();
-            intent.setAction(Params.ACTION_RESET_POSITION);
-            sendBroadcast(intent);
-            return true;
-
+        if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            Toast.makeText(this, "再按一次退出噢", Toast.LENGTH_SHORT).show();
+            mExitTime = System.currentTimeMillis();
+        } else {
+            finish();
         }
-
-        return super.onKeyDown(keyCode, event);
     }
-
 }

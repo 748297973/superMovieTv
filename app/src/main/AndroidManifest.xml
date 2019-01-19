@@ -28,7 +28,9 @@
         </activity>
         <activity
             android:name=".view.OnlineMovDetailActivity"
-            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".view.OnlineSeriDetailActivity"
             android:screenOrientation="landscape" />
         <activity
             android:name="com.tencent.smtt.sdk.VideoActivity"

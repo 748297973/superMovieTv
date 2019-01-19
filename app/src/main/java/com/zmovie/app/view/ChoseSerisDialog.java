@@ -2,7 +2,6 @@ package com.zmovie.app.view;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -21,6 +20,7 @@ public class ChoseSerisDialog extends Dialog {
 
     private final TvRecyclerView seriList;
     private OnItemClicked listener;
+    private final ArrayList<String> playM3u8;
 
     public ChoseSerisDialog(@NonNull Context context, int playListSize, OnItemClicked listener) {
         super(context, R.style.Dialog_Fullscreens);
@@ -29,7 +29,7 @@ public class ChoseSerisDialog extends Dialog {
 
         seriList = findViewById(R.id.serilist);
         seriList.setSpacingWithMargins(20, 30);
-        ArrayList<String> playM3u8 =new ArrayList<>();
+        playM3u8 = new ArrayList<>();
 
         for (int i = 0; i < playListSize; i++) {
             playM3u8.add("第"+(i+1)+"集");
@@ -66,12 +66,12 @@ public class ChoseSerisDialog extends Dialog {
                 }
             });
             if (listener!=null){
-                listener.clicked(position);
+                listener.clicked(position,playM3u8.get(position));
             }
         }
     };
 
     interface OnItemClicked{
-        void clicked(int postion);
+        void clicked(int postion, String s);
     }
 }
