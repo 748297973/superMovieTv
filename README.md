@@ -5,10 +5,10 @@
 
 <table style="border-width: 0px ;">
     <tr>
-        <td><img src="https://github.com/hiliving/superMovieTv/blob/master/captures/screenshot.png" width = "480" height = "840" alt="图片名称" align=center />
+        <td><img src="https://github.com/hiliving/superMovieTv/blob/master/captures/screenshot.png"  alt="图片名称" align=center />
     </tr>
     <tr>
-        <td><img src="https://github.com/hiliving/superMovieTv/blob/master/captures/screenshot2.png" width = "480" height = "840" alt="图片名称" align=center /></td>
+        <td><img src="https://github.com/hiliving/superMovieTv/blob/master/captures/screenshot2.png" alt="图片名称" align=center /></td>
     </tr>
 </table>
 
