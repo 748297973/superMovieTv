@@ -135,13 +135,24 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
 
         //海报右边的短简介
         final StringBuilder mDescHeader = new StringBuilder();
-        for (int i = 0; i < descBean.getHeader_value().size(); i++) {
+        if (descBean.getHeader_key().size()>descBean.getHeader_value().size()){
+            for (int i = 0; i < descBean.getHeader_value().size(); i++) {
 
-            if (TextUtils.isEmpty(descBean.getHeader_value().get(i).trim())){
-                continue;
+                if (TextUtils.isEmpty(descBean.getHeader_value().get(i).trim())){
+                    continue;
+                }
+                mDescHeader.append(descBean.getHeader_key().get(i)+descBean.getHeader_value().get(i)+"\n");
             }
-            mDescHeader.append(descBean.getHeader_key().get(i)+descBean.getHeader_value().get(i)+"\n");
+        }else {
+            for (int i = 0; i < descBean.getHeader_key().size(); i++) {
+
+                if (TextUtils.isEmpty(descBean.getHeader_value().get(i).trim())){
+                    continue;
+                }
+                mDescHeader.append(descBean.getHeader_key().get(i)+descBean.getHeader_value().get(i)+"\n");
+            }
         }
+
 
         descView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,8 +176,11 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
         playUrlBean = gson.fromJson(downUrl, PlayUrlBean.class);
         ArrayList<String> playM3u8List = new ArrayList<>();
         ArrayList<String> playWebUrlList = new ArrayList<>();
+
+        //TODO 测试播放
         if (playUrlBean.getM3u8()!=null&&playUrlBean.getM3u8().size()>0){
             playerHelper.startPlay(playUrlBean.getM3u8().get(0).getUrl(),title);
+//            playerHelper.startPlay("http://vip.kuyun99.com/20190116/GFseDqkf/index.m3u8",title);
         }
 
         for (int i = 0; i < playUrlBean.getNormal().size(); i++) {
