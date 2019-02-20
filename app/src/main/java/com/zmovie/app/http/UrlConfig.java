@@ -15,7 +15,7 @@ public class UrlConfig {
     //获取专题
     public static final String GET_SUBJECT  = "ygcms/getSubject.php" ;
 
-    //获取专题
+    //获取在线电影
     public static final String GET_ONLINE  = "ygcms/getLineMovie.php" ;
 
     //获取专题

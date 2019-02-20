@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -17,8 +16,8 @@ import com.google.gson.Gson;
 import com.huangyong.playerlib.CustomIjkplayer;
 import com.owen.tvrecyclerview.widget.SimpleOnItemListener;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
+import com.tencent.smtt.sdk.TbsVideo;
 import com.zmovie.app.R;
-import com.zmovie.app.adapter.OnlineMvAdapter;
 import com.zmovie.app.adapter.OnlineRecAdapter;
 import com.zmovie.app.adapter.PlayListAdapter;
 import com.zmovie.app.data.GlobalMsg;
@@ -26,7 +25,6 @@ import com.zmovie.app.display.DisplayAdaptive;
 import com.zmovie.app.domain.DescBean;
 import com.zmovie.app.domain.OnlinePlayInfo;
 import com.zmovie.app.domain.PlayUrlBean;
-import com.zmovie.app.domain.RecentUpdate;
 import com.zmovie.app.focus.FocusBorder;
 import com.zmovie.app.presenter.GetRandomRecpresenter;
 import com.zmovie.app.presenter.iview.IRandom;
@@ -58,7 +56,6 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
     private FocusBorder mFocusBorder;
     private PlayUrlBean playUrlBean;
     private TextView shortDesc;
-    private PlayerHelper playerHelper;
     private View fullScreen;
     private View descView;
     private ChoseSerisDialog serisDialog;
@@ -125,33 +122,19 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
         if (!TextUtils.isEmpty(descBean.getDesc())){
             shortDesc.setText("简介："+descBean.getDesc());
         }else {
-            for (int i = 0; i < descBean.getHeader_key().size(); i++) {
-                if (descBean.getHeader_key().get(i).contains("演员")){
-                    shortDesc.setText("主演："+descBean.getHeader_value().get(i));
-                }
+            StringBuilder builder = new StringBuilder();
+
+            for (int i = 0; i < descBean.getHeader().size(); i++) {
+                builder.append(descBean.getHeader().get(i)+"\n");
             }
+
+            shortDesc.setText(builder.toString());
 
         }
 
         //海报右边的短简介
         final StringBuilder mDescHeader = new StringBuilder();
-        if (descBean.getHeader_key().size()>descBean.getHeader_value().size()){
-            for (int i = 0; i < descBean.getHeader_value().size(); i++) {
 
-                if (TextUtils.isEmpty(descBean.getHeader_value().get(i).trim())){
-                    continue;
-                }
-                mDescHeader.append(descBean.getHeader_key().get(i)+descBean.getHeader_value().get(i)+"\n");
-            }
-        }else {
-            for (int i = 0; i < descBean.getHeader_key().size(); i++) {
-
-                if (TextUtils.isEmpty(descBean.getHeader_value().get(i).trim())){
-                    continue;
-                }
-                mDescHeader.append(descBean.getHeader_key().get(i)+descBean.getHeader_value().get(i)+"\n");
-            }
-        }
 
 
         descView.setOnClickListener(new View.OnClickListener() {
@@ -176,12 +159,6 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
         playUrlBean = gson.fromJson(downUrl, PlayUrlBean.class);
         ArrayList<String> playM3u8List = new ArrayList<>();
         ArrayList<String> playWebUrlList = new ArrayList<>();
-
-        //TODO 测试播放
-        if (playUrlBean.getM3u8()!=null&&playUrlBean.getM3u8().size()>0){
-            playerHelper.startPlay(playUrlBean.getM3u8().get(0).getUrl(),title);
-//            playerHelper.startPlay("http://vip.kuyun99.com/20190116/GFseDqkf/index.m3u8",title);
-        }
 
         for (int i = 0; i < playUrlBean.getNormal().size(); i++) {
             playWebUrlList.add("第"+(i+1)+"集");
@@ -209,7 +186,10 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
         serisDialog = new ChoseSerisDialog(OnlineMovDetailActivity.this,playUrlBean.getM3u8().size(), new ChoseSerisDialog.OnItemClicked() {
             @Override
             public void clicked(int postion, String s) {
-                playerHelper.startPlayFullScreen(playUrlBean.getM3u8().get(postion).getUrl(),title+s);
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("screenMode",102);
+                TbsVideo.openVideo(OnlineMovDetailActivity.this,playUrlBean.getM3u8().get(postion).getUrl(),bundle);
                 serisDialog.dismiss();
             }
         });
@@ -242,12 +222,7 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
         descView = findViewById(R.id.show_desc);
         //全屏按钮
         fullScreen = findViewById(R.id.fullscreen_view);
-        fullScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playerHelper.makeFullscreen();
-            }
-        });
+
         fullScreen.requestFocus();
         fullScreen.setNextFocusLeftId(R.id.fullscreen_view);
 
@@ -274,8 +249,7 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
         recommedList.setSpacingWithMargins(12,40);
 
         //播放器
-       playerHelper = PlayerHelper.getInstance();
-        playerHelper.init(this,ijkplayer);
+
 
 
         titleView = findViewById(R.id.detai_title);
@@ -303,7 +277,10 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
                 if (position==9){
                     serisDialog.show();
                 }else {
-                   playerHelper.startPlay(playUrlBean.getM3u8().get(position).getUrl(),title+"第"+(position+1)+"集");
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("screenMode",102);
+                    TbsVideo.openVideo(OnlineMovDetailActivity.this,playUrlBean.getM3u8().get(position).getUrl(),bundle);
+                    serisDialog.dismiss();
                 }
             }
         });
@@ -322,15 +299,7 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
     @Override
     public void onBackPressed() {
 
-        if (ijkplayer.isFullScreen()){
-            playerHelper.cancelFullscreen();
-            fullScreen.requestFocus();
-            return;
-        }
 
-        if (!ijkplayer.onBackPressed()) {
-            super.onBackPressed();
-        }
         super.onBackPressed();
     }
 
@@ -351,15 +320,6 @@ public class OnlineMovDetailActivity extends Activity implements IRandom {
     protected void onDestroy() {
         ijkplayer.release();
         super.onDestroy();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (ijkplayer.isFullScreen()){
-            playerHelper.onKeyEvent(keyCode,event);
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override

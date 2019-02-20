@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.huangyong.playerlib.CustomIjkplayer;
 import com.owen.tvrecyclerview.widget.SimpleOnItemListener;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
+import com.tencent.smtt.sdk.TbsVideo;
 import com.zmovie.app.R;
 import com.zmovie.app.adapter.OnlineRecAdapter;
 import com.zmovie.app.adapter.PlayListAdapter;
@@ -54,7 +55,6 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
     private FocusBorder mFocusBorder;
     private PlayUrlBean playUrlBean;
     private TextView shortDesc;
-    private PlayerHelper playerHelper;
     private View fullScreen;
     private View descView;
     private ChoseSerisDialog serisDialog;
@@ -118,32 +118,23 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
         Gson gson = new Gson();
         final DescBean descBean = gson.fromJson(movDescription, DescBean.class);
         titleView.setText(title);
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < descBean.getHeader().size(); i++) {
+            builder.append(descBean.getHeader().get(i)+"\n");
+        }
         if (!TextUtils.isEmpty(descBean.getDesc())){
             shortDesc.setText("简介："+descBean.getDesc());
         }else {
-            for (int i = 0; i < descBean.getHeader_key().size(); i++) {
-                if (descBean.getHeader_key().get(i).contains("演员")){
-                    shortDesc.setText("主演："+descBean.getHeader_value().get(i));
-                }
-            }
-
+            shortDesc.setText(builder.toString());
         }
 
-        //海报右边的短简介
-        final StringBuilder mDescHeader = new StringBuilder();
-        for (int i = 0; i < descBean.getHeader_value().size(); i++) {
 
-            if (TextUtils.isEmpty(descBean.getHeader_value().get(i).trim())){
-                continue;
-            }
-            mDescHeader.append(descBean.getHeader_key().get(i)+descBean.getHeader_value().get(i)+"\n");
-        }
 
         descView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DescMovieDialog descDialog = new DescMovieDialog(OnlineSeriDetailActivity.this,1);
-                descDialog.setDescData(mDescHeader.toString()+descBean.getDesc(),posterUrl);
+                descDialog.setDescData(builder.toString(),posterUrl);
                 descDialog.show();
             }
         });
@@ -151,7 +142,7 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
             @Override
             public void onClick(View v) {
                 DescMovieDialog descDialog = new DescMovieDialog(OnlineSeriDetailActivity.this,1);
-                descDialog.setDescData(mDescHeader.toString()+descBean.getDesc(),posterUrl);
+                descDialog.setDescData(builder.toString(),posterUrl);
                 descDialog.show();
             }
         });
@@ -161,9 +152,6 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
         playUrlBean = gson.fromJson(downUrl, PlayUrlBean.class);
         ArrayList<String> playM3u8List = new ArrayList<>();
         ArrayList<String> playWebUrlList = new ArrayList<>();
-        if (playUrlBean.getM3u8()!=null&&playUrlBean.getM3u8().size()>0){
-            playerHelper.startPlay(playUrlBean.getM3u8().get(0).getUrl(),title);
-        }
 
         for (int i = 0; i < playUrlBean.getNormal().size(); i++) {
             playWebUrlList.add("第"+(i+1)+"集");
@@ -193,7 +181,10 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
         serisDialog = new ChoseSerisDialog(OnlineSeriDetailActivity.this,playUrlBean.getM3u8().size(), new ChoseSerisDialog.OnItemClicked() {
             @Override
             public void clicked(int postion, String s) {
-                playerHelper.startPlayFullScreen(playUrlBean.getM3u8().get(postion).getUrl(),title+s);
+                Bundle bundle = new Bundle();
+                bundle.putInt("screenMode",102);
+                TbsVideo.openVideo(OnlineSeriDetailActivity.this,playUrlBean.getM3u8().get(postion).getUrl(),bundle);
+
                 serisDialog.dismiss();
             }
         });
@@ -226,12 +217,7 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
         descView = findViewById(R.id.show_desc);
         //全屏按钮
         fullScreen = findViewById(R.id.fullscreen_view);
-        fullScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playerHelper.makeFullscreen();
-            }
-        });
+
         fullScreen.requestFocus();
         fullScreen.setNextFocusLeftId(R.id.fullscreen_view);
 
@@ -257,9 +243,6 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
         recyclerView.setSpacingWithMargins(12, 20);
         recommedList.setSpacingWithMargins(12,40);
 
-        //播放器
-       playerHelper = PlayerHelper.getInstance();
-        playerHelper.init(this,ijkplayer);
 
 
         titleView = findViewById(R.id.detai_title);
@@ -287,7 +270,10 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
                 if (position==9){
                     serisDialog.show();
                 }else {
-                   playerHelper.startPlay(playUrlBean.getM3u8().get(position).getUrl(),title+"第"+(position+1)+"集");
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("screenMode",102);
+                    TbsVideo.openVideo(OnlineSeriDetailActivity.this,playUrlBean.getM3u8().get(position).getUrl(),bundle);
+
                 }
             }
         });
@@ -305,16 +291,6 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
 
     @Override
     public void onBackPressed() {
-
-        if (ijkplayer.isFullScreen()){
-            playerHelper.cancelFullscreen();
-            fullScreen.requestFocus();
-            return;
-        }
-
-        if (!ijkplayer.onBackPressed()) {
-            super.onBackPressed();
-        }
         super.onBackPressed();
     }
 
@@ -339,10 +315,6 @@ public class OnlineSeriDetailActivity extends Activity implements IRandom {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (ijkplayer.isFullScreen()){
-            playerHelper.onKeyEvent(keyCode,event);
-            return true;
-        }
         return super.onKeyDown(keyCode, event);
     }
 
